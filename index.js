@@ -24,15 +24,22 @@ const FACEBOOK = 'Facebook Ads';
 const BING = 'Bing Ads' 
 const GOOGLEADS = 'Google Ads';
 
-const trackingInformation = {
-  'Google Analytics': {},
-  'Facebook Ads': {},
-  'Bing Ads': {},
-  'Google Ads': []
-};
+const sites = [
+  'https://www.logicalposition.com/',
+  'https://www.millerplastics.com/',
+  'https://www.hannaandersson.com/baby-girl/56548-V98.html?cgid=baby-girl&dwvar_56548-V98_color=V98'];
 
-(async () => {
-  const browser = await puppeteer.launch({ headless: true });
+
+const checkPage = async (site) => {
+  console.log('Started testing for ', site);
+  let trackingInformation = {
+    'Google Analytics': {},
+    'Facebook Ads': {},
+    'Bing Ads': {},
+    'Google Ads': []
+  };
+
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
   page.on('request', (request) => {
@@ -68,23 +75,31 @@ const trackingInformation = {
     }
   });
 
-  await page.goto('https://www.hannaandersson.com/baby-girl/56548-V98.html?cgid=baby-girl&dwvar_56548-V98_color=V98', /* { waitUntil: 'networkidle0' } */);
+  await page.goto(site);
   await browser.close();
-  console.log(trackingInformation);
-})();
+  reportJson[site] = trackingInformation;
+  console.dir(reportJson, { depth: null });
 
-function storeTrackingInformation(platform, dataObj) {
-  let { id, hitType } = dataObj;
-  if (typeof id != 'undefined' && typeof hitType != 'undefined') {
-    trackingInformation[platform][id] = (typeof trackingInformation[platform][id] != 'undefined')
-                                        ? trackingInformation[platform][id]
-                                        : {};
-    trackingInformation[platform][id][hitType] = (typeof trackingInformation[platform][id][hitType] != 'undefined')
-                                                ? trackingInformation[platform][id][hitType] + 1
-                                                : 1; 
-  } else if (typeof id != 'undefined') {
-    if (!trackingInformation[platform].includes(id)) {
-      trackingInformation[platform].push(id);
+  function storeTrackingInformation(platform, dataObj) {
+    let { id, hitType } = dataObj;
+    if (typeof id != 'undefined' && typeof hitType != 'undefined') {
+      trackingInformation[platform][id] = (typeof trackingInformation[platform][id] != 'undefined')
+                                          ? trackingInformation[platform][id]
+                                          : {};
+      trackingInformation[platform][id][hitType] = (typeof trackingInformation[platform][id][hitType] != 'undefined')
+                                                  ? trackingInformation[platform][id][hitType] + 1
+                                                  : 1; 
+    } else if (typeof id != 'undefined') {
+      if (!trackingInformation[platform].includes(id)) {
+        trackingInformation[platform].push(id);
+      }
     }
   }
-}
+};
+
+let reportJson = {};
+
+sites.forEach((site) => {
+    reportJson[site] = {};
+    checkPage(site);
+});
