@@ -133,4 +133,4 @@ sites.forEach((site) => {
 Promise.all(promiseArr).then(() => {
   console.log('All done! Results:');
   console.dir(reportJson, { depth: null });
-})
+});
