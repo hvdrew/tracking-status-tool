@@ -133,4 +133,8 @@ sites.forEach((site) => {
 Promise.all(promiseArr).then(() => {
   console.log('All done! Results:');
   console.dir(reportJson, { depth: null });
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 23f47dc7b76278a2c42ad0b2588e47a546fadb8d
