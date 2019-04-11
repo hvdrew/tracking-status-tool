@@ -1,0 +1,10 @@
+{
+  "name": "tracking-status-checker-poc",
+  "version": "1.0.0",
+  "author": "Andrew Merison",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^1.14.0"
+  }
+}
