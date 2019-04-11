@@ -70,7 +70,7 @@ const checkPage = async (site) => {
     } else if (url.indexOf('facebook.com/tr/') > -1) {
       let parsedUrl = URL.parse(url, true);
 
-      // Check if the URL contained query string values for the tracking ID and hit type
+      // Check if the URL contained query string values for the pixel ID and hit type
       if (typeof parsedUrl.query.id != 'undefined' && typeof parsedUrl.query.id != 'undefined') {
         console.log(`${site} - FACEBOOK PIXEL: ${parsedUrl.query.id} - ${parsedUrl.query.ev.toUpperCase()}`);
         storeTrackingInformation(FACEBOOK, { id: parsedUrl.query.id, hitType: parsedUrl.query.ev });
@@ -133,4 +133,4 @@ sites.forEach((site) => {
 Promise.all(promiseArr).then(() => {
   console.log('All done! Results:');
   console.dir(reportJson, { depth: null });
-})
+});
