@@ -65,7 +65,7 @@ const checkPage = async (site) => {
       // Check if the URL contained query string values for the tracking ID and hit type
       if (typeof parsedUrl.query.tid != 'undefined' && typeof parsedUrl.query.t != 'undefined') {
         console.log(`${site} - GOOGLE ANALYTICS: ${parsedUrl.query.tid} - ${parsedUrl.query.t.toUpperCase()}`);
-        storeTrackingInformation(GOOGLEANALYTICS, { id: parsedUrl.query.tid, hitType: parsedUrl.query.t });
+        storeData(GOOGLEANALYTICS, { id: parsedUrl.query.tid, hitType: parsedUrl.query.t });
       }
     } else if (url.indexOf('facebook.com/tr/') > -1) {
       let parsedUrl = URL.parse(url, true);
@@ -73,7 +73,7 @@ const checkPage = async (site) => {
       // Check if the URL contained query string values for the pixel ID and hit type
       if (typeof parsedUrl.query.id != 'undefined' && typeof parsedUrl.query.id != 'undefined') {
         console.log(`${site} - FACEBOOK PIXEL: ${parsedUrl.query.id} - ${parsedUrl.query.ev.toUpperCase()}`);
-        storeTrackingInformation(FACEBOOK, { id: parsedUrl.query.id, hitType: parsedUrl.query.ev });
+        storeData(FACEBOOK, { id: parsedUrl.query.id, hitType: parsedUrl.query.ev });
       }
     } else if (url.indexOf('googleads.g.doubleclick.net') > -1) {
       let parsedUrl = URL.parse(url, true);
@@ -81,14 +81,14 @@ const checkPage = async (site) => {
 
       // Check if the URL contained query string values for the conversion ID
       console.log(`${site} - GOOGLE ADS REMARKETING: ${conversionId}`);
-      storeTrackingInformation(GOOGLEADS, { id: conversionId });
+      storeData(GOOGLEADS, { id: conversionId });
     } else if (url.indexOf('bat.bing.com/action') > -1) {
       let parsedUrl = URL.parse(url, true);
 
       // Check if the URL contained query string values for the tracking ID and hit type
       if (typeof parsedUrl.query.ti != 'undefined' && typeof parsedUrl.query.evt != 'undefined') {
         console.log(`${site} - BING UET: ${parsedUrl.query.ti} - ${parsedUrl.query.evt}`);
-        storeTrackingInformation(BING, { id: parsedUrl.query.ti, hitType: parsedUrl.query.evt });
+        storeData(BING, { id: parsedUrl.query.ti, hitType: parsedUrl.query.evt });
       }
     }
   });
@@ -101,18 +101,19 @@ const checkPage = async (site) => {
   reportJson[site] = trackingInformation;
 
   // Function that builds the report objects for us
-  function storeTrackingInformation(platform, dataObj) {
+  function storeData(platform, dataObj) {
     let { id, hitType } = dataObj;
+    let info = trackingInformation[platform];
     if (typeof id != 'undefined' && typeof hitType != 'undefined') {
-      trackingInformation[platform][id] = (typeof trackingInformation[platform][id] != 'undefined')
-                                          ? trackingInformation[platform][id]
+      info[id] = (typeof info[id] != 'undefined')
+                                          ? info[id]
                                           : {};
-      trackingInformation[platform][id][hitType] = (typeof trackingInformation[platform][id][hitType] != 'undefined')
-                                                  ? trackingInformation[platform][id][hitType] + 1
+      info[id][hitType] = (typeof info[id][hitType] != 'undefined')
+                                                  ? info[id][hitType] + 1
                                                   : 1; 
     } else if (typeof id != 'undefined') {
-      if (!trackingInformation[platform].includes(id)) {
-        trackingInformation[platform].push(id);
+      if (!info.includes(id)) {
+        info.push(id);
       }
     }
   }
