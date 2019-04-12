@@ -28,11 +28,15 @@ const FACEBOOK = 'Facebook Ads';
 const BING = 'Bing Ads' 
 const GOOGLEADS = 'Google Ads';
 
-const sites = [
+const exampleSites = [
 	'https://www.logicalposition.com/',
 	'https://www.millerplastics.com/',
 	'https://www.hannaandersson.com/baby-girl/56548-V98.html?cgid=baby-girl&dwvar_56548-V98_color=V98'
 ];
+
+const sites = (process.argv.length > 2)
+	? process.argv.slice(2)
+	: exampleSites;
 
 const checkPage = async site => {
 	console.log('Started testing for ', site);
